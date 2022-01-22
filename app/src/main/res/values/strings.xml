@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">啄木鸟助手</string>
+
+    <string name="accessibility_service_description">啄木鸟助手</string>
+
+    <string name="deeplink_host">main.page.com</string>
+    <string name="deeplink_scheme">zmnhelp</string>
+</resources>
