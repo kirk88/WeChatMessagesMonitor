@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     ) {
         val accessibilityManager = getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
         val services =
-            accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
+            accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
         val serviceEnabled = services.any { it.id.contains(packageName) }
         Logger.debug { "AccessibilityServiceEnabled: $serviceEnabled" }
         if (serviceEnabled) {

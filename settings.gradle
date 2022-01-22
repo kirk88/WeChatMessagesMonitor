@@ -1,21 +1,16 @@
 pluginManagement {
     repositories {
-//        google { url = uri("https://maven.aliyun.com/repository/google") }
-//        mavenCentral { url = uri("https://maven.aliyun.com/repository/central") }
-//        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
-        google()
-        mavenCentral()
-        gradlePluginPortal()
+        google { url = uri("https://maven.aliyun.com/repository/google") }
+        mavenCentral { url = uri("https://maven.aliyun.com/repository/central") }
+        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
     }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-//        google { url = uri("https://maven.aliyun.com/repository/google") }
-//        mavenCentral { url = uri("https://maven.aliyun.com/repository/central") }
+        google { url = uri("https://maven.aliyun.com/repository/google") }
+        mavenCentral { url = uri("https://maven.aliyun.com/repository/central") }
         maven { url = uri("https://raw.githubusercontent.com/kirk88/kotlins/master") }
-        google()
-        mavenCentral()
     }
 }
 rootProject.name = "WeChatMessagesMonitor"

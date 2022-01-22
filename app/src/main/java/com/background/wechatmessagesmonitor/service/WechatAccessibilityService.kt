@@ -11,7 +11,6 @@ import com.background.wechatmessagesmonitor.data.createMessage
 import com.background.wechatmessagesmonitor.utils.Logger
 import com.background.wechatmessagesmonitor.utils.Prefs
 import com.background.wechatmessagesmonitor.utils.createNotification
-import java.lang.Exception
 
 class WechatAccessibilityService : AccessibilityService() {
 
@@ -31,6 +30,7 @@ class WechatAccessibilityService : AccessibilityService() {
         node ?: return
         for (i in 0 until node.childCount) {
             val child = node.getChild(i) ?: continue
+            Logger.debug { "${node.viewIdResourceName} ${node.contentDescription}  ${node.text}" }
             try {
                 Logger.debug { "$prefix${child.viewIdResourceName}  ${child.contentDescription}  ${child.text}" }
             } catch (ex: Exception) {
@@ -42,22 +42,27 @@ class WechatAccessibilityService : AccessibilityService() {
     private fun uploadMessages(node: AccessibilityNodeInfo?) {
         node ?: return
         val contentNode =
-            node.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/b79")
+            node.findAccessibilityNodeInfosByViewId(WECHAT_MESSAGE_LIST_VIEW_ID)
                 ?.firstOrNull()
                 ?: return
 
         val messages = mutableListOf<WechatMessage>()
+
+        var messageIndex = 0
+
+        val isGroup =
+            !node.findAccessibilityNodeInfosByViewId(WECHAT_GROUND_VIEW_ID).isNullOrEmpty()
 
         contentNode.children().forEach {
             var name: String? = null
             var nameIndex = 0
             var content: String? = null
             var contentIndex = 0
+
+            var redPacketContent: String? = null
             var mediaType: String? = null
 
             for (child in it.children()) {
-                Logger.debug { "${child.viewIdResourceName}  ${child.contentDescription}  ${child.text}" }
-
                 if (child.viewIdResourceName == WECHAT_TIME_NODE_VIEW_ID) {
                     messages.clear()
                 }
@@ -74,8 +79,12 @@ class WechatAccessibilityService : AccessibilityService() {
                         nameIndex = i
                     }
 
+                    if (id == WECHAT_REDPACKET_CONTENT_NODE_VIEW_ID) {
+                        redPacketContent = c.text?.toString()
+                    }
+
                     if (id == WECHAT_REDPACKET_NODE_VIEW_ID && content == null) {
-                        content = "[${c.text?.toString()}]"
+                        content = "[${c.text?.toString()}]${redPacketContent.orEmpty()}"
                         contentIndex = i
                     }
 
@@ -118,11 +127,21 @@ class WechatAccessibilityService : AccessibilityService() {
                 }
                 if (name != null && content != null) {
                     Logger.debug { "onAccessibilityEvent: $name  $content" }
-                    val message =
-                        kotlin.runCatching { createMessage(name, content, type = 1) }.getOrNull()
+                    val message = kotlin.runCatching {
+                        createMessage(
+                            name,
+                            content,
+                            from = if (isGroup) "群聊" else "个人",
+                            type = 1,
+                            index = messageIndex
+                        )
+                    }.getOrNull()
+
                     if (message != null) {
                         messages.add(message)
                     }
+
+                    messageIndex += 1
                 }
             }
         }

@@ -23,15 +23,11 @@ object MessagesUploadManager {
 
     fun addMessages(messages: Collection<WechatMessage>) =
         GlobalScope.launch(Dispatchers.IO + errorHandler) {
-            delay(1000)
-
             if (!applicationContext.isServiceWork(WechatForegroundService::class.java)) {
                 applicationContext.startServiceCompat(WechatForegroundService::class.java)
             }
 
             for (msg in messages) {
-                delay(200)
-
                 val key = msg.hashCode()
                 if (cacheMessages.get(key) == null) {
                     Logger.debug { msg }

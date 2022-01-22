@@ -16,6 +16,8 @@ import com.background.wechatmessagesmonitor.utils.createNotification
 
 class WechatNotificationService : NotificationListenerService() {
 
+    private var messageIndex: Int = 0
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug { "WechatNotificationService onStartCommand" }
         return START_STICKY
@@ -31,12 +33,22 @@ class WechatNotificationService : NotificationListenerService() {
             ""
         )?.trim() ?: return
 
-        Logger.debug { "onNotificationPosted  $title  $content" }
+        Logger.debug { "onNotificationPosted  $extras" }
 
-        val message = kotlin.runCatching { createMessage(title, content) }.getOrNull()
-        if(message != null) {
+        val message = kotlin.runCatching {
+            createMessage(
+                title,
+                content,
+                from = "未知",
+                type = 0,
+                index = messageIndex
+            )
+        }.getOrNull()
+        if (message != null) {
             MessagesUploadManager.addMessage(message)
         }
+
+        messageIndex += 1
     }
 
     override fun onListenerConnected() {
