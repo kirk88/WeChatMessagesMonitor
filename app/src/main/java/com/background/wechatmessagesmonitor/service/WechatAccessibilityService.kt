@@ -75,12 +75,12 @@ class WechatAccessibilityService : AccessibilityService() {
                     }
 
                     if (id == WECHAT_REDPACKET_NODE_VIEW_ID && content == null) {
-                        content = c.text?.toString()
+                        content = "[${c.text?.toString()}]"
                         contentIndex = i
                     }
 
                     if (id == WECHAT_TRANSFER_NODE_VIEW_ID && content == null) {
-                        content = c.text?.toString()
+                        content = "[${c.text?.toString()}]"
                         contentIndex = i
                     }
 
