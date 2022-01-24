@@ -1,4 +1,4 @@
-package com.background.wechatmessagesmonitor.data
+package com.background.wechatmessagesmonitor.data.model
 
 import com.background.wechatmessagesmonitor.applicationContext
 import com.background.wechatmessagesmonitor.constants.KEY_COMMISSIONER_ID
