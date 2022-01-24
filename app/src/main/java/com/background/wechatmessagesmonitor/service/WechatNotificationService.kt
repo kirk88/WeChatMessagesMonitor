@@ -6,7 +6,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import com.background.wechatmessagesmonitor.constants.KEY_NOTIFICATION_SERVICE_HAS_KILLED
 import com.background.wechatmessagesmonitor.constants.NOTIFICATION_ID
-import com.background.wechatmessagesmonitor.constants.WECHAT_MESSAGE_CONTENT_EXTRA_REGEX
+import com.background.wechatmessagesmonitor.constants.WECHAT_NOTIFICATION_MESSAGE_CONTENT_EXTRA_REGEX
 import com.background.wechatmessagesmonitor.constants.WECHAT_PACKAGE_NAME
 import com.background.wechatmessagesmonitor.data.MessagesUploadManager
 import com.background.wechatmessagesmonitor.data.createMessage
@@ -15,6 +15,8 @@ import com.background.wechatmessagesmonitor.utils.Prefs
 import com.background.wechatmessagesmonitor.utils.createNotification
 
 class WechatNotificationService : NotificationListenerService() {
+
+    private var messageIndex: Int = 0
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug { "WechatNotificationService onStartCommand" }
@@ -27,16 +29,26 @@ class WechatNotificationService : NotificationListenerService() {
 
         val title = extras.getString(Notification.EXTRA_TITLE) ?: return
         val content = extras.getString(Notification.EXTRA_TEXT)?.replace(
-            WECHAT_MESSAGE_CONTENT_EXTRA_REGEX,
+            WECHAT_NOTIFICATION_MESSAGE_CONTENT_EXTRA_REGEX,
             ""
         )?.trim() ?: return
 
-        Logger.debug { "onNotificationPosted  $title  $content" }
+        Logger.debug { "onNotificationPosted  $extras" }
 
-        val message = kotlin.runCatching { createMessage(title, content) }.getOrNull()
-        if(message != null) {
+        val message = kotlin.runCatching {
+            createMessage(
+                title,
+                content,
+                from = "未知",
+                type = 0,
+                index = messageIndex
+            )
+        }.getOrNull()
+        if (message != null) {
             MessagesUploadManager.addMessage(message)
         }
+
+        messageIndex += 1
     }
 
     override fun onListenerConnected() {

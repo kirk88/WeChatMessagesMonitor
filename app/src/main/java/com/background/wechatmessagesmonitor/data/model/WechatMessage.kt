@@ -11,8 +11,10 @@ data class WechatMessage(
     val deviceId: String?,
     val phone: String?,
     val commissionerId: String?,
-    val type: Int
-){
+    val from: String,
+    val type: Int,
+    val index: Int
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -25,7 +27,9 @@ data class WechatMessage(
         if (deviceId != other.deviceId) return false
         if (phone != other.phone) return false
         if (commissionerId != other.commissionerId) return false
+        if (from != other.from) return false
         if (type != other.type) return false
+        if (index != other.index) return false
 
         return true
     }
@@ -36,20 +40,30 @@ data class WechatMessage(
         result = 31 * result + (deviceId?.hashCode() ?: 0)
         result = 31 * result + (phone?.hashCode() ?: 0)
         result = 31 * result + (commissionerId?.hashCode() ?: 0)
+        result = 31 * result + from.hashCode()
         result = 31 * result + type
+        result = 31 * result + index
         return result
     }
-
 }
 
-fun createMessage(who: String?, content: String, time: String? = null, type: Int = 0): WechatMessage {
+fun createMessage(
+    who: String?,
+    content: String,
+    from: String,
+    type: Int,
+    index: Int,
+    time: String? = System.currentTimeMillis().toDate().format()
+): WechatMessage {
     return WechatMessage(
         who,
         content,
-        time = time ?: System.currentTimeMillis().toDate().format(),
+        time = time,
         deviceId = DeviceIdUtils.getDeviceIdCached(applicationContext),
         phone = PhoneUtils.getPhoneNumber(applicationContext),
         commissionerId = Prefs[KEY_COMMISSIONER_ID],
-        type = type
+        from = from,
+        type = type,
+        index = index
     )
 }
