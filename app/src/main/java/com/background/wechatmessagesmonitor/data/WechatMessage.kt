@@ -8,7 +8,6 @@ data class WechatMessage(
     val who: String?,
     val content: String,
     val time: String?,
-    val realTime: String?,
     val deviceId: String?,
     val phone: String?,
     val commissionerId: String?,
@@ -54,14 +53,12 @@ fun createMessage(
     from: String,
     type: Int,
     index: Int,
-    time: String? = System.currentTimeMillis().toDate().format(),
-    realTime: String? = null
+    time: String? = System.currentTimeMillis().toDate().format()
 ): WechatMessage {
     return WechatMessage(
         who,
         content,
         time = time,
-        realTime = realTime,
         deviceId = DeviceIdUtils.getDeviceIdCached(applicationContext),
         phone = PhoneUtils.getPhoneNumber(applicationContext),
         commissionerId = Prefs[KEY_COMMISSIONER_ID],
