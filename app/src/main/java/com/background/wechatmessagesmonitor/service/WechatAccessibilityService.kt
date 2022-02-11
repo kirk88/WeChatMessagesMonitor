@@ -47,6 +47,7 @@ class WechatAccessibilityService : AccessibilityService() {
         val messages = mutableListOf<WechatMessage>()
 
         var messageIndex = 0
+        var time: String? = null
 
         contentNode.children().forEach {
             var name: String? = null
@@ -57,11 +58,11 @@ class WechatAccessibilityService : AccessibilityService() {
             var redPacketContent: String? = null
             var mediaType: String? = null
 
-            for (child in it.children()) {
-                if (child.viewIdResourceName in WECHAT_TIME_NODE_VIEW_IDS) {
-                    messages.clear()
-                }
+            it.findTimeNode()?.text?.toString()?.let { text ->
+                time = text
+            }
 
+            for (child in it.children()) {
                 if (child.viewIdResourceName in WECHAT_AVATAR_NODE_VIEW_IDS) {
                     name = child.contentDescription?.replace("头像".toRegex(), "")
                 }
@@ -121,11 +122,12 @@ class WechatAccessibilityService : AccessibilityService() {
                     Logger.debug { "自己发送的" }
                 }
                 if (name != null && content != null) {
-                    Logger.debug { "onAccessibilityEvent: $name  $content" }
+                    Logger.debug { "onAccessibilityEvent: $time  $name  $content" }
                     val message = kotlin.runCatching {
                         createMessage(
                             name,
                             content,
+                            time = time,
                             from = if (isFromGroup) "群聊" else "个人",
                             type = 1,
                             index = messageIndex
@@ -146,6 +148,17 @@ class WechatAccessibilityService : AccessibilityService() {
 
     private fun AccessibilityNodeInfo.findContentNode(): AccessibilityNodeInfo? {
         for (viewId in WECHAT_MESSAGE_LIST_VIEW_IDS) {
+            val node = findAccessibilityNodeInfosByViewId(viewId)
+                ?.firstOrNull()
+            if (node != null) {
+                return node
+            }
+        }
+        return null
+    }
+
+    private fun AccessibilityNodeInfo.findTimeNode(): AccessibilityNodeInfo? {
+        for (viewId in WECHAT_TIME_NODE_VIEW_IDS) {
             val node = findAccessibilityNodeInfosByViewId(viewId)
                 ?.firstOrNull()
             if (node != null) {
