@@ -2,6 +2,7 @@ package com.background.wechatmessagesmonitor.data
 
 import android.util.LruCache
 import com.background.wechatmessagesmonitor.applicationContext
+import com.background.wechatmessagesmonitor.data.model.WechatMessage
 import com.background.wechatmessagesmonitor.service.WechatForegroundService
 import com.background.wechatmessagesmonitor.utils.Logger
 import com.background.wechatmessagesmonitor.utils.isServiceWork
@@ -36,7 +37,6 @@ object MessagesUploadManager {
                 }
             }
         }
-
 
     fun collectMessages(block: suspend (WechatMessage) -> Unit): Job =
         GlobalScope.launch(Dispatchers.IO + errorHandler) {

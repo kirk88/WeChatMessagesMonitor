@@ -6,8 +6,8 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.background.wechatmessagesmonitor.constants.*
 import com.background.wechatmessagesmonitor.data.MessagesUploadManager
-import com.background.wechatmessagesmonitor.data.WechatMessage
-import com.background.wechatmessagesmonitor.data.createMessage
+import com.background.wechatmessagesmonitor.data.model.WechatMessage
+import com.background.wechatmessagesmonitor.data.model.createMessage
 import com.background.wechatmessagesmonitor.utils.Logger
 import com.background.wechatmessagesmonitor.utils.Prefs
 import com.background.wechatmessagesmonitor.utils.createNotification
@@ -21,9 +21,9 @@ class WechatAccessibilityService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         val rootNode = rootInActiveWindow
-//        uploadMessages(rootNode)
+        uploadMessages(rootNode)
 
-        logNode(rootNode)
+//        logNode(rootNode)
     }
 
     private fun logNode(node: AccessibilityNodeInfo?, prefix: String = "") {
@@ -162,7 +162,7 @@ class WechatAccessibilityService : AccessibilityService() {
                 return true
             }
         }
-        return true
+        return false
     }
 
     private fun AccessibilityNodeInfo.children(): List<AccessibilityNodeInfo> {

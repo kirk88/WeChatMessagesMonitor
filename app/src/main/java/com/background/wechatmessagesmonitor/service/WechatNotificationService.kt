@@ -9,7 +9,7 @@ import com.background.wechatmessagesmonitor.constants.NOTIFICATION_ID
 import com.background.wechatmessagesmonitor.constants.WECHAT_NOTIFICATION_MESSAGE_CONTENT_EXTRA_REGEX
 import com.background.wechatmessagesmonitor.constants.WECHAT_PACKAGE_NAME
 import com.background.wechatmessagesmonitor.data.MessagesUploadManager
-import com.background.wechatmessagesmonitor.data.createMessage
+import com.background.wechatmessagesmonitor.data.model.createMessage
 import com.background.wechatmessagesmonitor.utils.Logger
 import com.background.wechatmessagesmonitor.utils.Prefs
 import com.background.wechatmessagesmonitor.utils.createNotification

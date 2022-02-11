@@ -22,17 +22,10 @@ import com.background.wechatmessagesmonitor.R
 import com.background.wechatmessagesmonitor.constants.KEY_ACCESSIBILITY_SERVICE_HAS_KILLED
 import com.background.wechatmessagesmonitor.constants.KEY_COMMISSIONER_ID
 import com.background.wechatmessagesmonitor.constants.KEY_NOTIFICATION_SERVICE_HAS_KILLED
-import com.background.wechatmessagesmonitor.data.createMessage
 import com.background.wechatmessagesmonitor.service.WechatAccessibilityService
 import com.background.wechatmessagesmonitor.service.WechatForegroundService
 import com.background.wechatmessagesmonitor.service.WechatNotificationService
 import com.background.wechatmessagesmonitor.utils.*
-import com.nice.kothttp.OkRequestMethod
-import com.nice.kothttp.httpCallBuilder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.launchIn
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 

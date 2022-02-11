@@ -50,4 +50,4 @@ val WECHAT_TRANSFER_NODE_VIEW_IDS = arrayOf(
     "com.tencent.mm:id/yb"
 )
 
-const val BASE_URL = "https://t.zmn365.cn/api/weixin"
+const val BASE_URL = "https://t.zmn365.cn/api/weixins"

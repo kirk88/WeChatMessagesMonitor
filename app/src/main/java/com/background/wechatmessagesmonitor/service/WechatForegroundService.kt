@@ -5,8 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import com.background.wechatmessagesmonitor.constants.NOTIFICATION_ID
 import com.background.wechatmessagesmonitor.data.MessagesUploadManager
-import com.background.wechatmessagesmonitor.data.WechatMessage
-import com.background.wechatmessagesmonitor.data.createMessage
+import com.background.wechatmessagesmonitor.data.model.WechatMessage
 import com.background.wechatmessagesmonitor.utils.Logger
 import com.background.wechatmessagesmonitor.utils.createNotification
 import com.background.wechatmessagesmonitor.utils.toJson
@@ -21,6 +20,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class WechatForegroundService : Service() {
 
     private var uploadJob: Job? = null
+
+    private var lastUploadTime: Long = System.currentTimeMillis()
+
+    private val messages = mutableListOf<WechatMessage>()
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -38,7 +41,18 @@ class WechatForegroundService : Service() {
         Logger.debug { "WechatForegroundService onCreate" }
 
         uploadJob = MessagesUploadManager.collectMessages {
-            uploadMessage(it)
+            if (System.currentTimeMillis() - lastUploadTime > 60 * 1000) {
+                if (messages.isNotEmpty()) {
+                    val tempMessages = messages.toList()
+                    uploadMessages(tempMessages)
+                }
+
+                lastUploadTime = System.currentTimeMillis()
+
+                messages.clear()
+            } else {
+                messages.add(it)
+            }
         }
     }
 
@@ -60,14 +74,14 @@ class WechatForegroundService : Service() {
         stopForeground(true)
     }
 
-    private suspend fun uploadMessage(message: WechatMessage) {
+    private suspend fun uploadMessages(messages: List<WechatMessage>) {
         httpCallBuilder<String>(OkRequestMethod.Post)
             .requestBody {
-                message.toJson().toRequestBody("application/json".toMediaType())
+                messages.toJson().toRequestBody("application/json".toMediaType())
             }
             .make()
             .catch {
-                Logger.error(it){ "Upload Message" }
+                Logger.error(it) { "Upload Message" }
             }
             .collect()
     }
